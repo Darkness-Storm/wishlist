@@ -2,6 +2,7 @@ from PyQt5 import QtWidgets, QtSql, QtCore, QtGui
 from PyQt5.QtWidgets import QMessageBox
 
 import config
+from dialog import NetworkSetting
 
 
 class MainWindow(QtWidgets.QMainWindow):
@@ -27,16 +28,26 @@ class MainWindow(QtWidgets.QMainWindow):
         self.resize(rect.width()/2, rect.height()/2)
 
     def add_menu(self):
+        self.menu_pref = QtWidgets.QMenu('Настройки')
+        self.act_con = QtWidgets.QAction('настройки соединения с сервером', self)
+        self.menu_pref.addAction(self.act_con)
         self.about = QtWidgets.QAction('О программе', self)
         self.aboutQt = QtWidgets.QAction('О Qt', self)
         self.menu_reg = QtWidgets.QMenu('Справка')
         self.menu_reg.addAction(self.about)
         self.menu_reg.addAction(self.aboutQt)
+        self.menuBar().addMenu(self.menu_pref)
         self.menuBar().addMenu(self.menu_reg)
 
     def init_signals(self):
         self.about.triggered.connect(self.view_about)
         self.aboutQt.triggered.connect(self.view_aboutQt)
+        self.act_con.triggered.connect(self.open_net_setting)
+
+    def open_net_setting(self):
+        form = NetworkSetting(parent=self)
+        form.setWindowTitle('Настройки доступа к серверу')
+        form.show()
 
     def view_about(self):
         str_about = '''Данная программа выполнена как тестовое задание
@@ -242,4 +253,3 @@ class TableWishListModel(QtSql.QSqlTableModel):
 
     def get_url(self, index):
         return self.record(index.row()).value('url')
-
